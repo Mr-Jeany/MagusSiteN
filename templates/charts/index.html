@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    {% load static %}
+</head>
+<body>
+    <div style="width: 50%">
+        <canvas id="statChart"></canvas>
+    </div>
+
+    <button id="createCard">[ + ]</button>
+    
+    <div id="cardsContainer">
+        <!-- For cards -->
+    </div>
+
+    <button id="rebuildChart" style="margin-top: 40px">REBUILD CHART</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script>
+        function hexToRgba(hex, percentage) {
+            // Remove # if present
+            hex = hex.replace('#', '');
+
+            // Parse r, g, b values
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+
+            return `rgba(${r}, ${g}, ${b}, ${percentage})`;
+        }
+
+        function generateNumbers(num) {
+            const result = [];
+            for (let i = 1; i <= num; i++) {
+                result.push(i.toString())
+            }
+
+            return result
+        }
+
+        const data = {
+            labels: generateNumbers({{ length }}),
+            datasets: [
+                {% for name, values in data.items %}
+                    {
+                        label: "{{ values.display }}",
+                        data: {{ values.values }},
+                        borderColor: "#{{ values.color }}",
+                        backgroundColor: hexToRgba("#{{ values.color }}", 0.5),
+                    },
+                {% endfor %}
+            ]
+        };
+    </script>
+    <script src="{% static "js/chart.js" %}"></script>
+</script>
+</body>
+</html>
